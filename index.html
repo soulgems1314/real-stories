@@ -1,0 +1,583 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>喚靈珠｜真實案例</title>
+<style>
+:root {
+  --cream:#fbf7f0;
+  --paper:#fffdf9;
+  --lav:#efe7f8;
+  --purple:#5b3b73;
+  --purple2:#77568e;
+  --muted:#817789;
+  --gold:#c8a04a;
+  /* 繁體中文粗宋字體堆疊：iPhone→Songti TC，Windows→PMingLiU，Android→generic serif */
+  --serif-tc:"Noto Serif TC","Source Han Serif TC","Songti TC","PMingLiU",serif;
+}
+* { box-sizing:border-box; }
+html { scroll-behavior:smooth; }
+body {
+  margin:0;
+  color:#403547;
+  background:linear-gradient(180deg,#fbf7f0 0%,#fffaf4 100%);
+  font-family:var(--serif-tc);
+  font-weight:400;
+}
+.wrap { max-width:760px; margin:auto; padding:18px 18px 64px; }
+header { display:flex; align-items:center; gap:10px; padding:12px 4px 20px; }
+header img { width:52px; height:52px; object-fit:contain; }
+header b { font-size:18px; color:var(--purple); }
+header small { display:block; color:var(--muted); letter-spacing:.18em; font-family:Arial,sans-serif; }
+
+.hero { padding:42px 6px 34px; }
+.hero .en { color:var(--gold); letter-spacing:.17em; font:700 13px Arial; }
+.hero h1 { font-size:48px; line-height:1.22; color:var(--purple); margin:14px 0 12px; }
+.hero p { color:var(--muted); font-size:16px; }
+
+.panel {
+  background:linear-gradient(145deg,#fffdf9,#f7f0fb);
+  border:1px solid rgba(201,163,78,.28);
+  border-radius:30px;
+  padding:22px;
+  box-shadow:0 16px 38px rgba(91,59,115,.08);
+}
+.panel h2 { font-size:22px; color:var(--purple); margin:0 0 4px; }
+.panel .sub { font:12px Arial; letter-spacing:.16em; color:var(--gold); margin-bottom:18px; }
+
+.tabs {
+  display:grid;
+  grid-template-columns:repeat(2,1fr);
+  gap:14px;
+}
+.alltab {
+  grid-column:1/-1;
+  justify-self:center;
+  width:72%;
+  max-width:420px;
+  height:22px;
+  min-height:22px;
+  padding:0 18px;
+  border:1px solid rgba(201,163,78,.58);
+  border-radius:999px;
+  background:linear-gradient(90deg,#f3eafb,#fffdf9);
+  color:var(--purple);
+  text-decoration:none;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  gap:7px;
+  font-size:14px;
+  font-weight:800;
+  line-height:1;
+}
+
+.category {
+  min-height:174px;
+  border-radius:28px;
+  overflow:hidden;
+  position:relative;
+  border:1px solid rgba(201,163,78,.52);
+  box-shadow:0 12px 28px rgba(91,59,115,.10);
+  background-size:cover;
+  background-position:center;
+  text-decoration:none;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+}
+.category::after {
+  content:"";
+  position:absolute;
+  inset:0;
+  background:linear-gradient(180deg,rgba(15,10,20,.10),rgba(15,10,20,.30));
+}
+.category-text {
+  position:relative;
+  z-index:1;
+  text-align:center;
+  color:white;
+  text-shadow:0 2px 14px rgba(0,0,0,.62);
+  padding:14px;
+}
+.category-text strong {
+  display:block;
+  font-size:24px;
+  letter-spacing:.03em;
+}
+.category-text span {
+  display:block;
+  margin-top:9px;
+  font:12px Arial;
+  letter-spacing:.16em;
+}
+
+.case-list,
+.story-page {
+  margin-top:26px;
+  display:none;
+}
+.case-list:target,
+.story-page:target {
+  display:block;
+}
+/* 動態載入區內的清單／故事頁一律顯示（由 JS 控制切換） */
+#dynamic .case-list,
+#dynamic .story-page { display:block; }
+
+.case-list .section-head,
+.story-page .section-head {
+  text-align:center;
+  margin-bottom:18px;
+}
+.case-list .section-head h2,
+.story-page .section-head h2 {
+  color:var(--purple);
+  margin:0 0 6px;
+  font-size:30px;
+}
+.case-list .section-head p,
+.story-page .section-head p {
+  color:var(--muted);
+  margin:0;
+}
+.coming-soon {
+  display:block;
+  margin-top:8px;
+  color:var(--gold);
+  font:12px Arial;
+  letter-spacing:.22em;
+}
+
+.case-card {
+  display:block;
+  text-decoration:none;
+  color:inherit;
+  background:#fff;
+  border:1px solid rgba(201,163,78,.30);
+  border-radius:26px;
+  overflow:hidden;
+  box-shadow:0 14px 30px rgba(91,59,115,.08);
+}
+.case-card img { width:100%; display:block; height:auto; object-fit:contain; background:#fffdf9; }
+.case-card .body { padding:18px; }
+.case-card .tag { font-size:12px; color:var(--gold); letter-spacing:.14em; }
+.case-card h3 { margin:7px 0 5px; color:var(--purple); font-size:24px; }
+.case-card p { margin:0; color:var(--muted); }
+.case-card .card-cta {
+  display:block;
+  margin-top:12px;
+  color:var(--purple);
+  font-size:15px;
+  font-weight:600;
+  letter-spacing:.01em;
+  transition:color .18s ease;
+}
+.case-card:hover .card-cta { color:var(--purple2); text-decoration:underline; }
+
+.story-images img {
+  width:100%;
+  height:auto;
+  display:block;
+  object-fit:contain;
+  border-radius:18px;
+  margin-bottom:12px;
+  background:#fffdf9;
+}
+.backlink {
+  display:inline-flex;
+  margin-top:14px;
+  text-decoration:none;
+  color:var(--purple);
+  font-weight:800;
+}
+/* 故事第一張圖：左右切換箭頭 + 滑動提示（新增，不影響既有樣式） */
+.story-frame { position:relative; }
+.story-nav {
+  position:absolute; top:50%; transform:translateY(-50%);
+  width:42px; height:42px; border-radius:50%;
+  border:1px solid rgba(201,163,78,.6);
+  background:rgba(255,253,249,.85);
+  color:var(--purple); font-size:22px; font-weight:800; line-height:1;
+  display:flex; align-items:center; justify-content:center;
+  cursor:pointer; z-index:2;
+  box-shadow:0 4px 14px rgba(91,59,115,.18);
+  -webkit-backdrop-filter:blur(2px); backdrop-filter:blur(2px);
+  -webkit-user-select:none; user-select:none; padding:0;
+}
+.story-nav.prev { left:12px; }
+.story-nav.next { right:12px; }
+.story-nav:hover { background:#fffdf9; }
+.story-hint {
+  position:absolute; left:50%; bottom:14px; transform:translateX(-50%);
+  z-index:2; background:rgba(43,27,50,.55); color:#fff;
+  font-size:12px; letter-spacing:.1em; padding:5px 13px; border-radius:999px;
+  -webkit-backdrop-filter:blur(2px); backdrop-filter:blur(2px);
+}
+/* Coming Soon 封面（沿用分類卡片視覺語言，新增類別） */
+.coming-cover {
+  min-height:190px; border-radius:28px; overflow:hidden; position:relative;
+  border:1px solid rgba(201,163,78,.52);
+  box-shadow:0 12px 28px rgba(91,59,115,.10);
+  background-size:cover; background-position:center; margin-bottom:20px;
+}
+.coming-cover::after {
+  content:""; position:absolute; inset:0;
+  background:linear-gradient(180deg,rgba(15,10,20,.06),rgba(15,10,20,.24));
+}
+.coming-back { text-align:center; margin-top:18px; }
+
+.cta {
+  margin:44px auto 0;
+  max-width:440px;
+  background:linear-gradient(145deg,#f3ebfa,#fffdf9);
+  border:1px solid rgba(201,163,78,.32);
+  border-radius:24px;
+  padding:18px 16px;
+  text-align:center;
+  box-shadow:0 14px 32px rgba(91,59,115,.08);
+}
+.cta h3 { font-size:25px; line-height:1.45; margin:0 0 8px; color:var(--purple); }
+.cta p { margin:0 0 12px; color:var(--muted); font-size:14px; }
+.q-only { width:142px; margin:0 auto 10px; }
+.q-only img { width:100%; display:block; object-fit:contain; }
+.cta a {
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  gap:8px;
+  background:linear-gradient(135deg,#6d4a86,#50345f);
+  color:#fff;
+  text-decoration:none;
+  border-radius:999px;
+  padding:11px 20px;
+  min-width:210px;
+  font-weight:800;
+}
+.cta small { display:block; margin-top:10px; color:var(--muted); }
+
+footer { text-align:center; color:var(--muted); font-size:13px; margin-top:38px; }
+
+@media(max-width:560px) {
+  .hero h1 { font-size:42px; }
+  .panel { padding:18px; }
+  .alltab { width:72%; height:20px; min-height:20px; font-size:13px; }
+  .category { min-height:164px; border-radius:26px; }
+  .category-text strong { font-size:22px; }
+  .cta { max-width:88%; padding:16px 14px; }
+  .q-only { width:132px; }
+}
+
+.cases-grid{
+  display:grid;
+  grid-template-columns:1fr;
+  gap:18px;
+}
+.load-more{
+  display:block;
+  margin:22px auto 0;
+  padding:11px 24px;
+  border-radius:999px;
+  border:1px solid rgba(201,163,78,.58);
+  background:linear-gradient(90deg,#f3eafb,#fffdf9);
+  color:var(--purple);
+  font-family:inherit;
+  font-size:15px;
+  font-weight:800;
+  cursor:pointer;
+}
+.case-item.hidden-case{display:none;}
+@media(min-width:700px){
+  .cases-grid{grid-template-columns:repeat(2,minmax(0,1fr));}
+}
+
+.alltab{
+  height:22px !important;
+  min-height:22px !important;
+  border-radius:999px !important;
+}
+
+/* 繁體中文粗宋字體：主標題／分類標題／案例標題（font-weight:700，含自動回退） */
+.hero h1,
+.panel h2,
+.category-text strong,
+.case-list .section-head h2,
+.story-page .section-head h2,
+.case-card h3,
+.cta h3 {
+  font-family:var(--serif-tc);
+  font-weight:700;
+}
+/* 內文維持 400～500 */
+.hero p,
+.panel .sub,
+.case-list .section-head p,
+.story-page .section-head p,
+.case-card p,
+.cta p {
+  font-weight:400;
+}
+</style>
+</head>
+<body>
+<div class="wrap">
+<header>
+  <img src="assets/logo.png" alt="喚靈珠">
+  <div><b>喚靈珠</b><small>SOUL GEMS</small></div>
+</header>
+
+<section class="hero">
+  <div class="en">COMPANION STORIES</div>
+  <h1>四大陪伴</h1>
+  <p>點選故事，即可閱讀完整圖文</p>
+</section>
+
+<section class="panel">
+  <h2>選擇想閱讀的陪伴</h2>
+  <div class="sub">CHOOSE A STORY</div>
+
+  <div class="tabs" id="tabs">
+    <a class="alltab" href="#all">✦ 全部故事</a>
+    <!-- 四大分類卡片由 cases.json / 設定自動生成 -->
+  </div>
+</section>
+
+<div id="dynamic"></div>
+
+<section class="cta">
+  <h3>你的故事，也值得被<br>溫柔陪伴。</h3>
+  <p>點一下，找玄鈺老師聊聊現在的狀況。</p>
+  <div class="q-only"><img src="assets/xuanyu.png" alt="Q版玄鈺老師"></div>
+  <a href="https://lin.ee/5xbUMlW">💬 找玄鈺老師聊聊</a>
+  <small>點擊後返回喚靈珠 LINE OA</small>
+</section>
+
+<footer>喚靈珠® Soul Gems｜神佛給方向，人生靠準備</footer>
+</div>
+
+<script>
+(function(){
+  "use strict";
+
+  /* 四大陪伴分類設定（背景圖固定；有無案例由 cases.json 決定） */
+  const CATEGORIES = [
+    { key:"lingzhu", title:"靈珠陪伴", en:"SOUL JEWEL",   image:"assets/category/lingzhu.jpg", subtitle:"每一條命鍊，都有一段屬於它的陪伴故事。" },
+    { key:"incense", title:"香品陪伴", en:"INCENSE",      image:"assets/category/incense.jpg", subtitle:"每一縷香，都是一段安定的陪伴。" },
+    { key:"divine",  title:"神諭陪伴", en:"DIVINE WORDS", image:"assets/category/divine.jpg",  subtitle:"神佛給方向，人生靠準備。" },
+    { key:"home",    title:"居家陪伴", en:"HOME ENERGY",  image:"assets/category/home.jpg",    subtitle:"讓生活的空間，也被溫柔照顧。" }
+  ];
+  const PAGE_SIZE = 6;
+
+  const tabs = document.getElementById("tabs");
+  const dynamic = document.getElementById("dynamic");
+  let CASES = [];
+  let visibleCount = PAGE_SIZE;   // 目前清單顯示數量
+
+  function esc(s){
+    return String(s == null ? "" : s)
+      .replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;")
+      .replace(/"/g,"&quot;").replace(/'/g,"&#39;");
+  }
+  function categoryOf(key){ return CATEGORIES.find(c => c.key === key) || null; }
+  function caseById(id){ return CASES.find(c => c.id === id) || null; }
+  function casesInCategory(key){ return CASES.filter(c => c.category === key); }
+
+  /* 生成四大分類卡片（接在「全部故事」膠囊之後） */
+  function renderCategoryCards(){
+    CATEGORIES.forEach(cat => {
+      const a = document.createElement("a");
+      a.className = "category";
+      a.href = "#cat/" + cat.key;
+      a.style.backgroundImage = "url(" + cat.image + ")";
+      a.innerHTML =
+        '<div class="category-text"><strong>' + esc(cat.title) +
+        '</strong><span>' + esc(cat.en) + '</span></div>';
+      tabs.appendChild(a);
+    });
+  }
+
+  /* 案例卡片 HTML */
+  function caseCardHTML(c){
+    const cat = categoryOf(c.category);
+    const tag = cat ? cat.title : c.category;
+    return (
+      '<a class="case-card case-item" href="#story/' + esc(c.id) + '">' +
+        '<img src="' + esc(c.cover) + '" alt="' + esc(c.title) + '" loading="lazy">' +
+        '<div class="body">' +
+          '<div class="tag">' + esc(tag) + '</div>' +
+          '<h3>' + esc(c.title) + '</h3>' +
+          '<p>' + esc(c.summary) + '</p>' +
+          '<span class="card-cta" aria-hidden="true">✨ 閱讀完整陪伴故事 →</span>' +
+        '</div>' +
+      '</a>'
+    );
+  }
+
+  /* 清單頁（分類 或 全部）— 每次顯示 6 篇，超過才顯示查看更多 */
+  function renderList(list, headTitle, headSubtitle, backTip){
+    if(!list.length){
+      // 空分類：顯示「故事整理中 / Coming Soon」，不留白
+      dynamic.innerHTML =
+        '<section class="case-list">' +
+          '<div class="section-head">' +
+            '<h2>' + esc(headTitle) + '</h2>' +
+            '<p>故事整理中<span class="coming-soon">Coming Soon</span></p>' +
+          '</div>' +
+        '</section>';
+      return;
+    }
+
+    const shown = list.slice(0, visibleCount);
+    const cardsHTML = shown.map(caseCardHTML).join("");
+    const showMore = list.length > visibleCount;
+
+    dynamic.innerHTML =
+      '<section class="case-list">' +
+        '<div class="section-head">' +
+          '<h2>' + esc(headTitle) + '</h2>' +
+          (headSubtitle ? '<p>' + esc(headSubtitle) + '</p>' : '') +
+        '</div>' +
+        '<div class="cases-grid">' + cardsHTML + '</div>' +
+        (showMore ? '<button class="load-more" id="loadMoreBtn" type="button">查看更多陪伴故事</button>' : '') +
+      '</section>';
+
+    if(showMore){
+      const btn = document.getElementById("loadMoreBtn");
+      btn.addEventListener("click", function(){
+        visibleCount += PAGE_SIZE;
+        renderList(list, headTitle, headSubtitle, backTip);
+      });
+    }
+  }
+
+  /* 故事閱讀頁：五張圖直式閱讀 */
+  function renderStory(c){
+    const cat = categoryOf(c.category);
+    const list = c.images || [];
+    const imgs = list.map(function(src, i){
+      const img = '<img src="' + esc(src) + '" alt="' + esc(c.title) + '" loading="lazy" data-si="' + i + '">';
+      if(i === 0 && list.length > 1){
+        return '<div class="story-frame">' +
+                 '<button class="story-nav prev" type="button" aria-label="上一張">&#8249;</button>' +
+                 '<button class="story-nav next" type="button" aria-label="下一張">&#8250;</button>' +
+                 '<span class="story-hint">← 滑動閱讀 →</span>' +
+                 img +
+               '</div>';
+      }
+      return img;
+    }).join("");
+    const backHref = cat ? "#cat/" + cat.key : "#all";
+    const backText = cat ? "← 回到" + cat.title : "← 回到全部故事";
+
+    dynamic.innerHTML =
+      '<section class="story-page">' +
+        '<div class="section-head">' +
+          '<h2>' + esc(c.title) + '</h2>' +
+          '<p>' + esc(c.summary) + '</p>' +
+        '</div>' +
+        '<div class="story-images">' + imgs + '</div>' +
+        '<a class="backlink" href="' + backHref + '">' + esc(backText) + '</a>' +
+      '</section>';
+
+    // 左右箭頭：在五張圖之間平滑切換閱讀位置
+    const imgEls = dynamic.querySelectorAll(".story-images img");
+    let idx = 0;
+    function show(n){
+      idx = Math.max(0, Math.min(imgEls.length - 1, n));
+      imgEls[idx].scrollIntoView({ behavior:"smooth", block:"center" });
+    }
+    const prevBtn = dynamic.querySelector(".story-nav.prev");
+    const nextBtn = dynamic.querySelector(".story-nav.next");
+    if(prevBtn) prevBtn.addEventListener("click", function(e){ e.preventDefault(); e.stopPropagation(); show(idx - 1); });
+    if(nextBtn) nextBtn.addEventListener("click", function(e){ e.preventDefault(); e.stopPropagation(); show(idx + 1); });
+  }
+
+  /* Coming Soon 頁：保留分類封面圖片 + 精品文案 + 返回四大陪伴 */
+  function renderComingSoon(cat, key){
+    const title = cat ? cat.title : key;
+    const image = cat ? cat.image : "";
+    dynamic.innerHTML =
+      '<section class="story-page">' +
+        '<div class="coming-cover" style="background-image:url(' + esc(image) + ')"></div>' +
+        '<div class="section-head">' +
+          '<h2>' + esc(title) + '</h2>' +
+          '<p>故事整理中<br>第一篇陪伴故事<br>即將上線<span class="coming-soon">敬請期待 ✨</span></p>' +
+        '</div>' +
+        '<div class="coming-back"><a class="backlink" href="#/">← 返回四大陪伴</a></div>' +
+      '</section>';
+  }
+
+  function scrollToDynamic(){
+    // 讓新內容進入視線（保留手機版比例，不硬跳到最上）
+    window.requestAnimationFrame(function(){
+      dynamic.scrollIntoView({ behavior:"smooth", block:"start" });
+    });
+  }
+
+  /* Hash 路由：#/ 首頁、#all 全部、#cat/<key> 分類、#story/<id> 故事 */
+  function route(){
+    const hash = (location.hash || "").replace(/^#/, "");
+
+    if(!hash || hash === "/" ){
+      dynamic.innerHTML = "";
+      return;
+    }
+
+    if(hash === "all"){
+      visibleCount = PAGE_SIZE;
+      renderList(CASES.slice(), "全部故事", "每一段陪伴，都有一個真實的故事。");
+      scrollToDynamic();
+      return;
+    }
+
+    if(hash.indexOf("cat/") === 0){
+      const key = hash.slice(4);
+      const cat = categoryOf(key);
+      const list = casesInCategory(key);
+      if(!list.length){
+        renderComingSoon(cat, key);
+      }else{
+        visibleCount = PAGE_SIZE;
+        renderList(list, cat ? cat.title : key, cat ? cat.subtitle : "");
+      }
+      scrollToDynamic();
+      return;
+    }
+
+    if(hash.indexOf("story/") === 0){
+      const id = hash.slice(6);
+      const c = caseById(id);
+      if(c){
+        renderStory(c);
+        scrollToDynamic();
+      }else{
+        dynamic.innerHTML = "";
+      }
+      return;
+    }
+
+    // 未知路由 → 回首頁
+    dynamic.innerHTML = "";
+  }
+
+  function boot(){
+    renderCategoryCards();
+    window.addEventListener("hashchange", route);
+    route();
+  }
+
+  /* 載入 cases.json（相對路徑，GitHub Pages 可用） */
+  fetch("cases.json", { cache:"no-cache" })
+    .then(function(r){ if(!r.ok) throw new Error("cases.json HTTP " + r.status); return r.json(); })
+    .then(function(data){ CASES = Array.isArray(data) ? data : []; boot(); })
+    .catch(function(err){
+      console.error("讀取 cases.json 失敗：", err);
+      CASES = [];
+      boot(); // 仍顯示分類卡片；分類點入後為 Coming Soon
+    });
+})();
+</script>
+
+</body>
+</html>
