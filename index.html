@@ -4,6 +4,12 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>喚靈珠｜真實案例</title>
+
+<!-- 繁體粗宋字體：正式載入 Noto Serif TC，確保 Windows／iPhone／Android 顯示一致 -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+TC:wght@600;700;800;900&display=swap" rel="stylesheet">
+
 <style>
 :root {
   --cream:#fbf7f0;
@@ -298,7 +304,7 @@ footer { text-align:center; color:var(--muted); font-size:13px; margin-top:38px;
   border-radius:999px !important;
 }
 
-/* 繁體中文粗宋字體：主標題／分類標題／案例標題（font-weight:700，含自動回退） */
+/* 繁體中文粗宋字體：主標題／分類標題／案例標題／CTA 標題（font-weight:800，含系統回退） */
 .hero h1,
 .panel h2,
 .category-text strong,
@@ -307,7 +313,7 @@ footer { text-align:center; color:var(--muted); font-size:13px; margin-top:38px;
 .case-card h3,
 .cta h3 {
   font-family:var(--serif-tc);
-  font-weight:700;
+  font-weight:800;
 }
 /* 內文維持 400～500 */
 .hero p,
