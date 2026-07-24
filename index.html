@@ -324,6 +324,36 @@ footer { text-align:center; color:var(--muted); font-size:13px; margin-top:38px;
 .cta p {
   font-weight:400;
 }
+
+.story-content { display:grid; gap:18px; }
+.story-block { margin:0; }
+.story-block img,
+.story-block video {
+  width:100%; height:auto; display:block;
+  border-radius:18px;
+  background:#fffdf9;
+  border:1px solid rgba(201,163,78,.28);
+  box-shadow:0 10px 24px rgba(91,59,115,.07);
+}
+.story-block video { max-height:78vh; object-fit:contain; background:#1d181f; }
+.story-block figcaption,
+.story-caption {
+  margin-top:9px; text-align:center; color:var(--muted);
+  font-size:14px; line-height:1.7;
+}
+.story-video-title {
+  margin:0 0 10px; color:var(--purple); font-size:21px;
+  font-weight:800; text-align:center;
+}
+.story-note {
+  background:linear-gradient(145deg,#f7efe4,#fffdf9);
+  border:1px solid rgba(156,102,54,.28);
+  border-radius:20px; padding:18px;
+  color:#5a4437; line-height:1.9;
+  box-shadow:0 10px 24px rgba(90,57,31,.06);
+}
+.story-note h3 { margin:0 0 8px; font-size:20px; color:#7a4d2d; }
+
 </style>
 </head>
 <body>
@@ -457,22 +487,37 @@ footer { text-align:center; color:var(--muted); font-size:13px; margin-top:38px;
     }
   }
 
-  /* 故事閱讀頁：五張圖直式閱讀 */
+  /* 故事閱讀頁：相容舊版 images，並支援 image / video / note 混合內容 */
   function renderStory(c){
     const cat = categoryOf(c.category);
-    const list = c.images || [];
-    const imgs = list.map(function(src, i){
-      const img = '<img src="' + esc(src) + '" alt="' + esc(c.title) + '" loading="lazy" data-si="' + i + '">';
-      if(i === 0 && list.length > 1){
-        return '<div class="story-frame">' +
-                 '<button class="story-nav prev" type="button" aria-label="上一張">&#8249;</button>' +
-                 '<button class="story-nav next" type="button" aria-label="下一張">&#8250;</button>' +
-                 '<span class="story-hint">← 滑動閱讀 →</span>' +
-                 img +
-               '</div>';
+    const blocks = Array.isArray(c.content) && c.content.length
+      ? c.content
+      : (c.images || []).map(function(src){ return { type:"image", src:src }; });
+
+    const contentHTML = blocks.map(function(item){
+      const type = item.type || "image";
+      if(type === "video"){
+        return '<figure class="story-block">' +
+          (item.title ? '<h3 class="story-video-title">' + esc(item.title) + '</h3>' : '') +
+          '<video controls playsinline preload="metadata">' +
+            '<source src="' + esc(item.src) + '" type="video/mp4">' +
+            '你的瀏覽器暫不支援影片播放。' +
+          '</video>' +
+          (item.caption ? '<figcaption>' + esc(item.caption) + '</figcaption>' : '') +
+        '</figure>';
       }
-      return img;
+      if(type === "note"){
+        return '<section class="story-note story-block">' +
+          (item.title ? '<h3>' + esc(item.title) + '</h3>' : '') +
+          '<div>' + esc(item.body || '') + '</div>' +
+        '</section>';
+      }
+      return '<figure class="story-block">' +
+        '<img src="' + esc(item.src) + '" alt="' + esc(item.alt || c.title) + '" loading="lazy">' +
+        (item.caption ? '<figcaption>' + esc(item.caption) + '</figcaption>' : '') +
+      '</figure>';
     }).join("");
+
     const backHref = cat ? "#cat/" + cat.key : "#all";
     const backText = cat ? "← 回到" + cat.title : "← 回到全部故事";
 
@@ -482,21 +527,9 @@ footer { text-align:center; color:var(--muted); font-size:13px; margin-top:38px;
           '<h2>' + esc(c.title) + '</h2>' +
           '<p>' + esc(c.summary) + '</p>' +
         '</div>' +
-        '<div class="story-images">' + imgs + '</div>' +
+        '<div class="story-content">' + contentHTML + '</div>' +
         '<a class="backlink" href="' + backHref + '">' + esc(backText) + '</a>' +
       '</section>';
-
-    // 左右箭頭：在五張圖之間平滑切換閱讀位置
-    const imgEls = dynamic.querySelectorAll(".story-images img");
-    let idx = 0;
-    function show(n){
-      idx = Math.max(0, Math.min(imgEls.length - 1, n));
-      imgEls[idx].scrollIntoView({ behavior:"smooth", block:"center" });
-    }
-    const prevBtn = dynamic.querySelector(".story-nav.prev");
-    const nextBtn = dynamic.querySelector(".story-nav.next");
-    if(prevBtn) prevBtn.addEventListener("click", function(e){ e.preventDefault(); e.stopPropagation(); show(idx - 1); });
-    if(nextBtn) nextBtn.addEventListener("click", function(e){ e.preventDefault(); e.stopPropagation(); show(idx + 1); });
   }
 
   /* Coming Soon 頁：保留分類封面圖片 + 精品文案 + 返回四大陪伴 */
@@ -573,15 +606,26 @@ footer { text-align:center; color:var(--muted); font-size:13px; margin-top:38px;
     route();
   }
 
-  /* 載入 cases.json（相對路徑，GitHub Pages 可用） */
-  fetch("cases.json", { cache:"no-cache" })
-    .then(function(r){ if(!r.ok) throw new Error("cases.json HTTP " + r.status); return r.json(); })
-    .then(function(data){ CASES = Array.isArray(data) ? data : []; boot(); })
-    .catch(function(err){
-      console.error("讀取 cases.json 失敗：", err);
-      CASES = [];
-      boot(); // 仍顯示分類卡片；分類點入後為 Coming Soon
-    });
+  /* 內建案例資料：讓電腦直接雙擊 index.html 預覽時也能正常顯示 */
+  const CASES_FALLBACK = [{"id":"lingzhu001","category":"lingzhu","number":"001","title":"靈珠陪伴 001","summary":"他不是沒有能力，只是一直把自己看得太小。","cover":"cases/lingzhu/001/01.jpg","images":["cases/lingzhu/001/01.jpg","cases/lingzhu/001/02.jpg","cases/lingzhu/001/03.jpg","cases/lingzhu/001/04.jpg","cases/lingzhu/001/05.jpg"]},{"id":"incense001","category":"incense","number":"001","title":"香品陪伴｜淨化香","summary":"一份為公司空間準備的淨化香陪伴紀錄。","cover":"cases/incense/001/cover.jpg","content":[{"type":"image","src":"cases/incense/001/cover.jpg","caption":"淨化香｜公司空間陪伴紀錄"},{"type":"video","src":"cases/incense/001/making-01.mp4","title":"香材準備紀錄","caption":"依照當次需求，準備並整理香材。"},{"type":"video","src":"cases/incense/001/making-02.mp4","title":"調製過程紀錄","caption":"香材配置與實際調製過程。"},{"type":"image","src":"cases/incense/001/guidance-designed.jpg","caption":"神佛提點｜本次用於公司空間"},{"type":"image","src":"cases/incense/001/guidance-handwritten.jpg","caption":"當次神佛提點原始手寫紀錄"},{"type":"video","src":"cases/incense/001/client-use.mp4","title":"客人實際使用紀錄","caption":"客人於公司空間實際點香。"},{"type":"image","src":"cases/incense/001/feedback.jpg","caption":"VIP 先行試用真實回饋"},{"type":"note","title":"本次案例說明","body":"本次為 VIP 先行試用，使用三星錐款香爐。每位個案情況不同，香品的使用方式與頻率，請以當次神佛提點為主。"}]}];
+
+  function startWith(data){
+    CASES = Array.isArray(data) ? data : CASES_FALLBACK;
+    boot();
+  }
+
+  /* GitHub Pages 讀 cases.json；本機 file:// 預覽則直接使用內建資料 */
+  if(location.protocol === "file:"){
+    startWith(CASES_FALLBACK);
+  }else{
+    fetch("cases.json", { cache:"no-cache" })
+      .then(function(r){ if(!r.ok) throw new Error("cases.json HTTP " + r.status); return r.json(); })
+      .then(startWith)
+      .catch(function(err){
+        console.error("讀取 cases.json 失敗，改用內建資料：", err);
+        startWith(CASES_FALLBACK);
+      });
+  }
 })();
 </script>
 
