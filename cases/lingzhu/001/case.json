@@ -1,0 +1,30 @@
+{
+  "id": "lingzhu001",
+  "category": "lingzhu",
+  "number": "001",
+  "title": "他不是沒有能力，只是一直把自己看得太小。",
+  "summary": "",
+  "cover": "cases/lingzhu/001/01.jpg",
+  "content": [
+    {
+      "type": "image",
+      "src": "cases/lingzhu/001/01.jpg"
+    },
+    {
+      "type": "image",
+      "src": "cases/lingzhu/001/02.jpg"
+    },
+    {
+      "type": "image",
+      "src": "cases/lingzhu/001/03.jpg"
+    },
+    {
+      "type": "image",
+      "src": "cases/lingzhu/001/04.jpg"
+    },
+    {
+      "type": "image",
+      "src": "cases/lingzhu/001/05.jpg"
+    }
+  ]
+}

@@ -395,237 +395,30 @@ footer { text-align:center; color:var(--muted); font-size:13px; margin-top:38px;
 <script>
 (function(){
   "use strict";
-
-  /* 四大陪伴分類設定（背景圖固定；有無案例由 cases.json 決定） */
   const CATEGORIES = [
-    { key:"lingzhu", title:"靈珠陪伴", en:"SOUL JEWEL",   image:"assets/category/lingzhu.jpg", subtitle:"每一條命鍊，都有一段屬於它的陪伴故事。" },
-    { key:"incense", title:"香品陪伴", en:"INCENSE",      image:"assets/category/incense.jpg", subtitle:"每一縷香，都是一段安定的陪伴。" },
-    { key:"divine",  title:"神諭陪伴", en:"DIVINE WORDS", image:"assets/category/divine.jpg",  subtitle:"神佛給方向，人生靠準備。" },
-    { key:"home",    title:"居家陪伴", en:"HOME ENERGY",  image:"assets/category/home.jpg",    subtitle:"讓生活的空間，也被溫柔照顧。" }
+    { key:"lingzhu", title:"靈珠陪伴", en:"SOUL JEWEL", image:"assets/category/lingzhu.jpg", subtitle:"每一條命鍊，都有一段屬於它的陪伴故事。" },
+    { key:"incense", title:"香品陪伴", en:"INCENSE", image:"assets/category/incense.jpg", subtitle:"每一縷香，都是一段安定的陪伴。" },
+    { key:"divine", title:"神諭陪伴", en:"DIVINE WORDS", image:"assets/category/divine.jpg", subtitle:"神佛給方向，人生靠準備。" },
+    { key:"home", title:"居家陪伴", en:"HOME ENERGY", image:"assets/category/home.jpg", subtitle:"讓生活的空間，也被溫柔照顧。" }
   ];
-  const PAGE_SIZE = 6;
-
-  const tabs = document.getElementById("tabs");
-  const dynamic = document.getElementById("dynamic");
-  let CASES = [];
-  let visibleCount = PAGE_SIZE;   // 目前清單顯示數量
-
-  function esc(s){
-    return String(s == null ? "" : s)
-      .replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;")
-      .replace(/"/g,"&quot;").replace(/'/g,"&#39;");
-  }
-  function categoryOf(key){ return CATEGORIES.find(c => c.key === key) || null; }
-  function caseById(id){ return CASES.find(c => c.id === id) || null; }
-  function casesInCategory(key){ return CASES.filter(c => c.category === key); }
-
-  /* 生成四大分類卡片（接在「全部故事」膠囊之後） */
-  function renderCategoryCards(){
-    CATEGORIES.forEach(cat => {
-      const a = document.createElement("a");
-      a.className = "category";
-      a.href = "#cat/" + cat.key;
-      a.style.backgroundImage = "url(" + cat.image + ")";
-      a.innerHTML =
-        '<div class="category-text"><strong>' + esc(cat.title) +
-        '</strong><span>' + esc(cat.en) + '</span></div>';
-      tabs.appendChild(a);
-    });
-  }
-
-  /* 案例卡片 HTML */
-  function caseCardHTML(c){
-    const cat = categoryOf(c.category);
-    const tag = cat ? cat.title : c.category;
-    return (
-      '<a class="case-card case-item" href="#story/' + esc(c.id) + '">' +
-        '<img src="' + esc(c.cover) + '" alt="' + esc(c.title) + '" loading="lazy">' +
-        '<div class="body">' +
-          '<div class="tag">' + esc(tag) + '</div>' +
-          '<h3>' + esc(c.title) + '</h3>' +
-          '<p>' + esc(c.summary) + '</p>' +
-          '<span class="card-cta" aria-hidden="true">✨ 閱讀完整陪伴故事 →</span>' +
-        '</div>' +
-      '</a>'
-    );
-  }
-
-  /* 清單頁（分類 或 全部）— 每次顯示 6 篇，超過才顯示查看更多 */
-  function renderList(list, headTitle, headSubtitle, backTip){
-    if(!list.length){
-      // 空分類：顯示「故事整理中 / Coming Soon」，不留白
-      dynamic.innerHTML =
-        '<section class="case-list">' +
-          '<div class="section-head">' +
-            '<h2>' + esc(headTitle) + '</h2>' +
-            '<p>故事整理中<span class="coming-soon">Coming Soon</span></p>' +
-          '</div>' +
-        '</section>';
-      return;
-    }
-
-    const shown = list.slice(0, visibleCount);
-    const cardsHTML = shown.map(caseCardHTML).join("");
-    const showMore = list.length > visibleCount;
-
-    dynamic.innerHTML =
-      '<section class="case-list">' +
-        '<div class="section-head">' +
-          '<h2>' + esc(headTitle) + '</h2>' +
-          (headSubtitle ? '<p>' + esc(headSubtitle) + '</p>' : '') +
-        '</div>' +
-        '<div class="cases-grid">' + cardsHTML + '</div>' +
-        (showMore ? '<button class="load-more" id="loadMoreBtn" type="button">查看更多陪伴故事</button>' : '') +
-      '</section>';
-
-    if(showMore){
-      const btn = document.getElementById("loadMoreBtn");
-      btn.addEventListener("click", function(){
-        visibleCount += PAGE_SIZE;
-        renderList(list, headTitle, headSubtitle, backTip);
-      });
-    }
-  }
-
-  /* 故事閱讀頁：相容舊版 images，並支援 image / video / note 混合內容 */
-  function renderStory(c){
-    const cat = categoryOf(c.category);
-    const blocks = Array.isArray(c.content) && c.content.length
-      ? c.content
-      : (c.images || []).map(function(src){ return { type:"image", src:src }; });
-
-    const contentHTML = blocks.map(function(item){
-      const type = item.type || "image";
-      if(type === "video"){
-        return '<figure class="story-block">' +
-          (item.title ? '<h3 class="story-video-title">' + esc(item.title) + '</h3>' : '') +
-          '<video controls playsinline preload="metadata">' +
-            '<source src="' + esc(item.src) + '" type="video/mp4">' +
-            '你的瀏覽器暫不支援影片播放。' +
-          '</video>' +
-          (item.caption ? '<figcaption>' + esc(item.caption) + '</figcaption>' : '') +
-        '</figure>';
-      }
-      if(type === "note"){
-        return '<section class="story-note story-block">' +
-          (item.title ? '<h3>' + esc(item.title) + '</h3>' : '') +
-          '<div>' + esc(item.body || '') + '</div>' +
-        '</section>';
-      }
-      return '<figure class="story-block">' +
-        '<img src="' + esc(item.src) + '" alt="' + esc(item.alt || c.title) + '" loading="lazy">' +
-        (item.caption ? '<figcaption>' + esc(item.caption) + '</figcaption>' : '') +
-      '</figure>';
-    }).join("");
-
-    const backHref = cat ? "#cat/" + cat.key : "#all";
-    const backText = cat ? "← 回到" + cat.title : "← 回到全部故事";
-
-    dynamic.innerHTML =
-      '<section class="story-page">' +
-        '<div class="section-head">' +
-          '<h2>' + esc(c.title) + '</h2>' +
-          '<p>' + esc(c.summary) + '</p>' +
-        '</div>' +
-        '<div class="story-content">' + contentHTML + '</div>' +
-        '<a class="backlink" href="' + backHref + '">' + esc(backText) + '</a>' +
-      '</section>';
-  }
-
-  /* Coming Soon 頁：保留分類封面圖片 + 精品文案 + 返回四大陪伴 */
-  function renderComingSoon(cat, key){
-    const title = cat ? cat.title : key;
-    const image = cat ? cat.image : "";
-    dynamic.innerHTML =
-      '<section class="story-page">' +
-        '<div class="coming-cover" style="background-image:url(' + esc(image) + ')"></div>' +
-        '<div class="section-head">' +
-          '<h2>' + esc(title) + '</h2>' +
-          '<p>故事整理中<br>第一篇陪伴故事<br>即將上線<span class="coming-soon">敬請期待 ✨</span></p>' +
-        '</div>' +
-        '<div class="coming-back"><a class="backlink" href="#/">← 返回四大陪伴</a></div>' +
-      '</section>';
-  }
-
-  function scrollToDynamic(){
-    // 讓新內容進入視線（保留手機版比例，不硬跳到最上）
-    window.requestAnimationFrame(function(){
-      dynamic.scrollIntoView({ behavior:"smooth", block:"start" });
-    });
-  }
-
-  /* Hash 路由：#/ 首頁、#all 全部、#cat/<key> 分類、#story/<id> 故事 */
-  function route(){
-    const hash = (location.hash || "").replace(/^#/, "");
-
-    if(!hash || hash === "/" ){
-      dynamic.innerHTML = "";
-      return;
-    }
-
-    if(hash === "all"){
-      visibleCount = PAGE_SIZE;
-      renderList(CASES.slice(), "全部故事", "每一段陪伴，都有一個真實的故事。");
-      scrollToDynamic();
-      return;
-    }
-
-    if(hash.indexOf("cat/") === 0){
-      const key = hash.slice(4);
-      const cat = categoryOf(key);
-      const list = casesInCategory(key);
-      if(!list.length){
-        renderComingSoon(cat, key);
-      }else{
-        visibleCount = PAGE_SIZE;
-        renderList(list, cat ? cat.title : key, cat ? cat.subtitle : "");
-      }
-      scrollToDynamic();
-      return;
-    }
-
-    if(hash.indexOf("story/") === 0){
-      const id = hash.slice(6);
-      const c = caseById(id);
-      if(c){
-        renderStory(c);
-        scrollToDynamic();
-      }else{
-        dynamic.innerHTML = "";
-      }
-      return;
-    }
-
-    // 未知路由 → 回首頁
-    dynamic.innerHTML = "";
-  }
-
-  function boot(){
-    renderCategoryCards();
-    window.addEventListener("hashchange", route);
-    route();
-  }
-
-  /* 內建案例資料：讓電腦直接雙擊 index.html 預覽時也能正常顯示 */
-  const CASES_FALLBACK = [{"id":"lingzhu001","category":"lingzhu","number":"001","title":"靈珠陪伴 001","summary":"他不是沒有能力，只是一直把自己看得太小。","cover":"cases/lingzhu/001/01.jpg","images":["cases/lingzhu/001/01.jpg","cases/lingzhu/001/02.jpg","cases/lingzhu/001/03.jpg","cases/lingzhu/001/04.jpg","cases/lingzhu/001/05.jpg"]},{"id":"incense001","category":"incense","number":"001","title":"香品陪伴｜淨化香","summary":"一份為公司空間準備的淨化香陪伴紀錄。","cover":"cases/incense/001/cover.jpg","content":[{"type":"image","src":"cases/incense/001/cover.jpg","caption":"淨化香｜公司空間陪伴紀錄"},{"type":"video","src":"cases/incense/001/making-01.mp4","title":"香材準備紀錄","caption":"依照當次需求，準備並整理香材。"},{"type":"video","src":"cases/incense/001/making-02.mp4","title":"調製過程紀錄","caption":"香材配置與實際調製過程。"},{"type":"image","src":"cases/incense/001/guidance-designed.jpg","caption":"神佛提點｜本次用於公司空間"},{"type":"image","src":"cases/incense/001/guidance-handwritten.jpg","caption":"當次神佛提點原始手寫紀錄"},{"type":"video","src":"cases/incense/001/client-use.mp4","title":"客人實際使用紀錄","caption":"客人於公司空間實際點香。"},{"type":"image","src":"cases/incense/001/feedback.jpg","caption":"VIP 先行試用真實回饋"},{"type":"note","title":"本次案例說明","body":"本次為 VIP 先行試用，使用三星錐款香爐。每位個案情況不同，香品的使用方式與頻率，請以當次神佛提點為主。"}]}];
-
-  function startWith(data){
-    CASES = Array.isArray(data) ? data : CASES_FALLBACK;
-    boot();
-  }
-
-  /* GitHub Pages 讀 cases.json；本機 file:// 預覽則直接使用內建資料 */
-  if(location.protocol === "file:"){
-    startWith(CASES_FALLBACK);
-  }else{
-    fetch("cases.json", { cache:"no-cache" })
-      .then(function(r){ if(!r.ok) throw new Error("cases.json HTTP " + r.status); return r.json(); })
-      .then(startWith)
-      .catch(function(err){
-        console.error("讀取 cases.json 失敗，改用內建資料：", err);
-        startWith(CASES_FALLBACK);
-      });
-  }
+  const PAGE_SIZE=6, tabs=document.getElementById("tabs"), dynamic=document.getElementById("dynamic");
+  const EMBEDDED_INDEX=[{"id":"lingzhu001","category":"lingzhu","number":"001","title":"他不是沒有能力，只是一直把自己看得太小。","summary":"","cover":"cases/lingzhu/001/01.jpg","detail":"cases/lingzhu/001/case.json"},{"id":"lingzhu002","category":"lingzhu","number":"002","title":"她不是不愛這個家","summary":"一直把家人放在前面，也別忘了把自己放回生命裡。","cover":"cases/lingzhu/002/cover.jpg","detail":"cases/lingzhu/002/case.json"},{"id":"incense001","category":"incense","number":"001","title":"香品陪伴｜淨化香","summary":"一份為公司空間準備的淨化香陪伴紀錄。","cover":"cases/incense/001/cover-square.jpg","detail":"cases/incense/001/case.json"}];
+  const EMBEDDED_DETAILS={"lingzhu001":{"id":"lingzhu001","category":"lingzhu","number":"001","title":"他不是沒有能力，只是一直把自己看得太小。","summary":"","cover":"cases/lingzhu/001/01.jpg","content":[{"type":"image","src":"cases/lingzhu/001/01.jpg"},{"type":"image","src":"cases/lingzhu/001/02.jpg"},{"type":"image","src":"cases/lingzhu/001/03.jpg"},{"type":"image","src":"cases/lingzhu/001/04.jpg"},{"type":"image","src":"cases/lingzhu/001/05.jpg"}]},"lingzhu002":{"id":"lingzhu002","category":"lingzhu","number":"002","title":"她不是不愛這個家","summary":"一直把家人放在前面，也別忘了把自己放回生命裡。","cover":"cases/lingzhu/002/cover.jpg","content":[{"type":"image","src":"cases/lingzhu/002/01.jpg","caption":"她不是不愛這個家，只是照顧所有人以後，常常忘了自己。"},{"type":"image","src":"cases/lingzhu/002/02.jpg","caption":"孩子與丈夫，是她人生重要的功課；但功課不是要她一直委屈自己。"},{"type":"image","src":"cases/lingzhu/002/03.jpg","caption":"神佛提醒她：愛家人，也要看見自己的感受。"},{"type":"image","src":"cases/lingzhu/002/04.jpg","caption":"依照她當下的狀態，安排黑髮晶、海藍寶、金髮晶與火山石。"},{"type":"note","title":"真實陪伴紀錄","body":"這些畫面沒有刻意安排美麗的打光，也沒有重拍成完美版本。留下的，是命鍊連結、實品與實際佩戴的當下紀錄。"},{"type":"video","src":"cases/lingzhu/002/link.mp4","title":"與命鍊連結的當下","caption":"當她與命鍊連結時，玄鈺老師看見她整個人的眼神都亮了起來。不是忽然不累了，而是她開始願意把自己放回心裡。"},{"type":"video","src":"cases/lingzhu/002/product.mp4","title":"命鍊實品紀錄","caption":"沒有棚拍與修飾，留下這條命鍊完成後最真實的樣子。"},{"type":"video","src":"cases/lingzhu/002/wear.mp4","title":"客人實際佩戴紀錄","caption":"真正的陪伴，不只停在完成作品，而是回到她每天生活的手腕上。"},{"type":"image","src":"cases/lingzhu/002/05.jpg","caption":"神佛給方向，人生還是要自己一步一步走。"}]},"incense001":{"id":"incense001","category":"incense","number":"001","title":"香品陪伴｜淨化香","summary":"一份為公司空間準備的淨化香陪伴紀錄。","cover":"cases/incense/001/cover-square.jpg","content":[{"type":"image","src":"cases/incense/001/cover.jpg","caption":"淨化香｜公司空間陪伴紀錄"},{"type":"video","src":"cases/incense/001/making-01.mp4","title":"香材準備紀錄","caption":"依照當次需求，準備並整理香材。"},{"type":"video","src":"cases/incense/001/making-02.mp4","title":"調製過程紀錄","caption":"香材配置與實際調製過程。"},{"type":"image","src":"cases/incense/001/guidance-designed.jpg","caption":"神佛提點｜本次用於公司空間"},{"type":"image","src":"cases/incense/001/guidance-handwritten.jpg","caption":"當次神佛提點原始手寫紀錄"},{"type":"video","src":"cases/incense/001/client-use.mp4","title":"客人實際使用紀錄","caption":"客人於公司空間實際點香。"},{"type":"image","src":"cases/incense/001/feedback.jpg","caption":"VIP 先行試用真實回饋"},{"type":"note","title":"本次案例說明","body":"本次為 VIP 先行試用，使用三星錐款香爐。每位個案情況不同，香品的使用方式與頻率，請以當次神佛提點為主。"}]}};
+  let CASES=[], visibleCount=PAGE_SIZE; const detailCache={};
+  function esc(s){return String(s??"").replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;").replace(/'/g,"&#39;");}
+  function categoryOf(k){return CATEGORIES.find(c=>c.key===k)||null;}
+  function casesInCategory(k){return CASES.filter(c=>c.category===k);}
+  function renderCategoryCards(){CATEGORIES.forEach(cat=>{const a=document.createElement("a");a.className="category";a.href="#cat/"+cat.key;a.style.backgroundImage="url("+cat.image+")";a.innerHTML='<div class="category-text"><strong>'+esc(cat.title)+'</strong><span>'+esc(cat.en)+'</span></div>';tabs.appendChild(a);});}
+  function caseCardHTML(c){const cat=categoryOf(c.category);return '<a class="case-card case-item" href="#story/'+esc(c.id)+'"><img src="'+esc(c.cover)+'" alt="'+esc(c.title)+'" loading="lazy"><div class="body"><div class="tag">'+esc(cat?cat.title:c.category)+'</div><h3>'+esc(c.title)+'</h3><p>'+esc(c.summary)+'</p><span class="card-cta">✨ 閱讀完整陪伴故事 →</span></div></a>';}
+  function renderList(list,title,subtitle){if(!list.length){dynamic.innerHTML='<section class="case-list"><div class="section-head"><h2>'+esc(title)+'</h2><p>故事整理中<span class="coming-soon">Coming Soon</span></p></div></section>';return;} const shown=list.slice(0,visibleCount);dynamic.innerHTML='<section class="case-list"><div class="section-head"><h2>'+esc(title)+'</h2>'+(subtitle?'<p>'+esc(subtitle)+'</p>':'')+'</div><div class="cases-grid">'+shown.map(caseCardHTML).join("")+'</div>'+(list.length>visibleCount?'<button class="load-more" id="loadMoreBtn">查看更多陪伴故事</button>':'')+'</section>'; const b=document.getElementById("loadMoreBtn");if(b)b.onclick=()=>{visibleCount+=PAGE_SIZE;renderList(list,title,subtitle);};}
+  function blockHTML(item,c){const t=item.type||"image";if(t==="video")return '<figure class="story-block">'+(item.title?'<h3 class="story-video-title">'+esc(item.title)+'</h3>':'')+'<video controls playsinline preload="metadata"><source src="'+esc(item.src)+'" type="video/mp4">你的瀏覽器暫不支援影片播放。</video>'+(item.caption?'<figcaption>'+esc(item.caption)+'</figcaption>':'')+'</figure>';if(t==="note")return '<section class="story-note story-block">'+(item.title?'<h3>'+esc(item.title)+'</h3>':'')+'<div>'+esc(item.body||'')+'</div></section>';return '<figure class="story-block"><img src="'+esc(item.src)+'" alt="'+esc(item.alt||c.title)+'" loading="lazy">'+(item.caption?'<figcaption>'+esc(item.caption)+'</figcaption>':'')+'</figure>';}
+  function renderStory(c){const cat=categoryOf(c.category), blocks=(c.content&&c.content.length)?c.content:(c.images||[]).map(src=>({type:'image',src}));dynamic.innerHTML='<section class="story-page"><div class="section-head"><h2>'+esc(c.title)+'</h2><p>'+esc(c.summary)+'</p></div><div class="story-content">'+blocks.map(x=>blockHTML(x,c)).join('')+'</div><a class="backlink" href="#cat/'+esc(c.category)+'">← 回到'+esc(cat?cat.title:'全部故事')+'</a></section>';}
+  async function loadStory(summary){if(detailCache[summary.id])return detailCache[summary.id];if(location.protocol==='file:'&&EMBEDDED_DETAILS[summary.id])return detailCache[summary.id]=EMBEDDED_DETAILS[summary.id];const r=await fetch(summary.detail,{cache:'no-cache'});if(!r.ok)throw new Error('case.json HTTP '+r.status);return detailCache[summary.id]=await r.json();}
+  function renderComingSoon(cat,key){dynamic.innerHTML='<section class="story-page"><div class="coming-cover" style="background-image:url('+esc(cat?cat.image:'')+')"></div><div class="section-head"><h2>'+esc(cat?cat.title:key)+'</h2><p>故事整理中<br>第一篇陪伴故事<br>即將上線<span class="coming-soon">敬請期待 ✨</span></p></div><div class="coming-back"><a class="backlink" href="#/">← 返回四大陪伴</a></div></section>';}
+  function scrollToDynamic(){requestAnimationFrame(()=>dynamic.scrollIntoView({behavior:'smooth',block:'start'}));}
+  async function route(){const hash=(location.hash||'').replace(/^#/,'');if(!hash||hash==='/'){dynamic.innerHTML='';return;}if(hash==='all'){visibleCount=PAGE_SIZE;renderList(CASES.slice(),'全部故事','每一段陪伴，都有一個真實的故事。');scrollToDynamic();return;}if(hash.startsWith('cat/')){const key=hash.slice(4),cat=categoryOf(key),list=casesInCategory(key);list.length?renderList(list,cat?cat.title:key,cat?cat.subtitle:''):renderComingSoon(cat,key);scrollToDynamic();return;}if(hash.startsWith('story/')){const id=hash.slice(6),s=CASES.find(c=>c.id===id);if(!s){dynamic.innerHTML='';return;}dynamic.innerHTML='<section class="story-page"><div class="section-head"><h2>故事載入中…</h2></div></section>';scrollToDynamic();try{renderStory(await loadStory(s));}catch(e){console.error(e);dynamic.innerHTML='<section class="story-page"><div class="section-head"><h2>暫時無法載入</h2><p>請重新整理後再試一次。</p></div></section>';}}}
+  function boot(data){CASES=Array.isArray(data)?data:[];renderCategoryCards();addEventListener('hashchange',route);route();}
+  if(location.protocol==='file:'){boot(EMBEDDED_INDEX);}else{fetch('cases/index.json',{cache:'no-cache'}).then(r=>{if(!r.ok)throw new Error('index HTTP '+r.status);return r.json();}).then(boot).catch(e=>{console.error(e);boot(EMBEDDED_INDEX);});}
 })();
 </script>
 

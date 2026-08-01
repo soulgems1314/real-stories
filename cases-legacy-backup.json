@@ -1,0 +1,70 @@
+[
+  {
+    "id": "lingzhu001",
+    "category": "lingzhu",
+    "number": "001",
+    "title": "靈珠陪伴 001",
+    "summary": "他不是沒有能力，只是一直把自己看得太小。",
+    "cover": "cases/lingzhu/001/01.jpg",
+    "images": [
+      "cases/lingzhu/001/01.jpg",
+      "cases/lingzhu/001/02.jpg",
+      "cases/lingzhu/001/03.jpg",
+      "cases/lingzhu/001/04.jpg",
+      "cases/lingzhu/001/05.jpg"
+    ]
+  },
+  {
+    "id": "incense001",
+    "category": "incense",
+    "number": "001",
+    "title": "香品陪伴｜淨化香",
+    "summary": "一份為公司空間準備的淨化香陪伴紀錄。",
+    "cover": "cases/incense/001/cover.jpg",
+    "content": [
+      {
+        "type": "image",
+        "src": "cases/incense/001/cover.jpg",
+        "caption": "淨化香｜公司空間陪伴紀錄"
+      },
+      {
+        "type": "video",
+        "src": "cases/incense/001/making-01.mp4",
+        "title": "香材準備紀錄",
+        "caption": "依照當次需求，準備並整理香材。"
+      },
+      {
+        "type": "video",
+        "src": "cases/incense/001/making-02.mp4",
+        "title": "調製過程紀錄",
+        "caption": "香材配置與實際調製過程。"
+      },
+      {
+        "type": "image",
+        "src": "cases/incense/001/guidance-designed.jpg",
+        "caption": "神佛提點｜本次用於公司空間"
+      },
+      {
+        "type": "image",
+        "src": "cases/incense/001/guidance-handwritten.jpg",
+        "caption": "當次神佛提點原始手寫紀錄"
+      },
+      {
+        "type": "video",
+        "src": "cases/incense/001/client-use.mp4",
+        "title": "客人實際使用紀錄",
+        "caption": "客人於公司空間實際點香。"
+      },
+      {
+        "type": "image",
+        "src": "cases/incense/001/feedback.jpg",
+        "caption": "VIP 先行試用真實回饋"
+      },
+      {
+        "type": "note",
+        "title": "本次案例說明",
+        "body": "本次為 VIP 先行試用，使用三星錐款香爐。每位個案情況不同，香品的使用方式與頻率，請以當次神佛提點為主。"
+      }
+    ]
+  }
+]

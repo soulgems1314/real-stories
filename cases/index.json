@@ -1,0 +1,29 @@
+[
+  {
+    "id": "lingzhu001",
+    "category": "lingzhu",
+    "number": "001",
+    "title": "他不是沒有能力，只是一直把自己看得太小。",
+    "summary": "",
+    "cover": "cases/lingzhu/001/01.jpg",
+    "detail": "cases/lingzhu/001/case.json"
+  },
+  {
+    "id": "lingzhu002",
+    "category": "lingzhu",
+    "number": "002",
+    "title": "她不是不愛這個家",
+    "summary": "一直把家人放在前面，也別忘了把自己放回生命裡。",
+    "cover": "cases/lingzhu/002/cover.jpg",
+    "detail": "cases/lingzhu/002/case.json"
+  },
+  {
+    "id": "incense001",
+    "category": "incense",
+    "number": "001",
+    "title": "香品陪伴｜淨化香",
+    "summary": "一份為公司空間準備的淨化香陪伴紀錄。",
+    "cover": "cases/incense/001/cover-square.jpg",
+    "detail": "cases/incense/001/case.json"
+  }
+]
