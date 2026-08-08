@@ -66,5 +66,38 @@
         "body": "本次為 VIP 先行試用，使用三星錐款香爐。每位個案情況不同，香品的使用方式與頻率，請以當次神佛提點為主。"
       }
     ]
+  },
+  {
+    "id": "divine001",
+    "category": "divine",
+    "number": "001",
+    "title": "善良，要有邊界。",
+    "summary": "她一直以為自己在幫忙，卻把別人的責任也扛了下來，累的只有自己。",
+    "cover": "cases/divine/001/01.jpg",
+    "content": [
+      {
+        "type": "image",
+        "src": "cases/divine/001/01.jpg"
+      },
+      {
+        "type": "video",
+        "src": "cases/divine/001/story.mp4",
+        "title": "神諭陪伴｜真實案例",
+        "caption": "從「我只是想幫忙」開始，看見工作中真正需要建立的邊界。",
+        "display": "portrait"
+      },
+      {
+        "type": "image",
+        "src": "cases/divine/001/02.jpg"
+      },
+      {
+        "type": "image",
+        "src": "cases/divine/001/03.jpg"
+      },
+      {
+        "type": "image",
+        "src": "cases/divine/001/04.jpg"
+      }
+    ]
   }
 ]
