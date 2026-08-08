@@ -26,8 +26,7 @@
     "cover": "cases/incense/001/cover-square.jpg",
     "detail": "cases/incense/001/case.json"
   },
-    },
-  {
+     {
     "id": "divine001",
     "category": "divine",
     "number": "001",
@@ -36,14 +35,5 @@
     "cover": "cases/divine/001/01.jpg",
     "detail": "cases/divine/001/case.json"
   },
-    },
-  {
-    "id": "divine001",
-    "category": "divine",
-    "number": "001",
-    "title": "善良，要有邊界。",
-    "summary": "她不是不夠善良，而是太習慣把別人的需要放在自己前面。",
-    "cover": "cases/divine/001/01.jpg",
-    "detail": "cases/divine/001/case.json"
-  }
+
 
