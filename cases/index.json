@@ -35,5 +35,14 @@
     "cover": "cases/divine/001/01.jpg",
     "detail": "cases/divine/001/case.json"
   },
-
+{
+  "id": "divine002",
+  "category": "divine",
+  "number": "002",
+  "title": "她放不下的，不只是這段感情",
+  "summary": "兩年的關係結束後，她還想留在對方身邊。真正放不下的，可能不只是這段感情。",
+  "cover": "cases/divine/002/01.jpg",
+  "detail": "cases/divine/002/case.json"
+}
+]
 
