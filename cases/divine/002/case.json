@@ -5,5 +5,37 @@
   "title": "她放不下的，不只是這段感情",
   "summary": "有些感情卡關，真正要看的，可能比「他還愛不愛我」更深。",
   "cover": "cases/divine/002/01.jpg",
-  "detail": "cases/divine/002/case.json"
+  "content": [
+    {
+      "type": "image",
+      "src": "cases/divine/002/01.jpg"
+    },
+    {
+      "type": "video",
+      "src": "cases/divine/002/story.mp4",
+      "title": "神諭問事｜真實案例",
+      "caption": "經當事人同意公開｜個人資訊已隱私處理",
+      "display": "portrait"
+    },
+    {
+      "type": "image",
+      "src": "cases/divine/002/02.jpg"
+    },
+    {
+      "type": "image",
+      "src": "cases/divine/002/03.jpg"
+    },
+    {
+      "type": "image",
+      "src": "cases/divine/002/04.jpg"
+    },
+    {
+      "type": "image",
+      "src": "cases/divine/002/05.jpg"
+    },
+    {
+      "type": "image",
+      "src": "cases/divine/002/06.jpg"
+    }
+  ]
 }
